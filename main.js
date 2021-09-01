@@ -1,44 +1,47 @@
 canvas = document.getElementById("myCanvas");
 ctx = canvas.getContext("2d");
 
-var mouseEvent = "empty";
+var width = screen.width;
 var lastPosX, lastPosY;
-
 color = "black";
 lineWidth = 2;
 radius = 10;
-canvas.addEventListener("mousedown", my_mouseDown);
 
-function my_mouseDown(e) {
+newWidth = screen.width - 70;
+newHeight = screen.height - 300;
+
+if (screen.width < 992) {
+    document.getElementById("myCanvas").width = newWidth;
+    document.getElementById("myCanvas").height = newHeight;
+    document.body.style.overflow = "hidden";
+
+}
+
+canvas.addEventListener("touchstart", my_touchstart);
+
+function my_touchstart(e) {
     color = document.getElementById("inptColor").value;
     lineWidth = document.getElementById("inptLineWidth").value;
     radius = document.getElementById("inptRadius").value;
-    mouseEvent = "mouseDown";
+
+    lastPosX = e.touches[0].clientX - canvas.offsetLeft;
+    lastPosY = e.touches[0].clientY - canvas.offsetTop;
 }
 
-canvas.addEventListener("mouseup", my_mouseUp);
+canvas.addEventListener("touchmove", my_touchMove);
 
-function my_mouseUp(e) {
-    mouseEvent = "mouseUp";
-}
-canvas.addEventListener("mouseleave", my_mouseLeave);
+function my_touchMove(e) {
+    currentPosX = e.touches[0].clientX - canvas.offsetLeft;
+    currentPosY = e.touches[0].clientY - canvas.offsetTop;
 
-function my_mouseLeave(e) {
-    mouseEvent = "mouseLeave";
-}
-canvas.addEventListener("mousemove", my_mouseMove);
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.arc(currentPosX, currentPosY, radius, 0, 2 * Math.PI);
+    ctx.stroke();
 
-function my_mouseMove(e) {
-    currentPosX = e.clientX - canvas.offsetLeft;
-    currentPosY = e.clientY - canvas.offsetTop;
-
-    if (mouseEvent = "mouseDown") {
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = lineWidth;
-        ctx.arc(currentPosX, currentPosY, radius, 0, 2 * Math.PI);
-        ctx.stroke();
-    }
+    lastPosX = currentPosX;
+    lastPosY = currentPosY;
 }
 
 function clearArea() {
